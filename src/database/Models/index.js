@@ -1,3 +1,4 @@
 import UserModel from './User';
+import VendorModel from './Vendor';
 
-export { UserModel };
+export { UserModel, VendorModel };

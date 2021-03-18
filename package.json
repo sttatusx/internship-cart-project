@@ -1,5 +1,6 @@
 {
-  "name": "cart",
+  "name": "basic-node-js",
+  "private": true,
   "version": "1.0.0",
   "main": "src/server.js",
   "license": "MIT",

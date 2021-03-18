@@ -1,7 +1,7 @@
-import cors from "cors";
-import dotenv from "dotenv";
-import express from "express";
-import { initDB } from "./database";
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import { initDB } from './database';
 
 // Express function
 export const app = express();

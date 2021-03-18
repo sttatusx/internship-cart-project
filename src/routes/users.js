@@ -1,6 +1,6 @@
 import jsend from 'jsend';
 import express from 'express';
-import { UserModel } from '../database/Models';
+import { UserModel, ProductModel } from '../database/Models';
 
 const router = express.Router();
 
@@ -59,7 +59,7 @@ router.delete('/:id', async (req, res) => {
     const deletedUser = await UserModel.findOneAndDelete({
       _id: req.params.id,
     });
-    
+
     res.send(jsend.success(deletedUser));
   } catch (err) {
     res.status(500).send(jsend.error({ code: 500, message: err.message }));
@@ -79,6 +79,71 @@ router.patch('/:id', async (req, res) => {
     updates.forEach((update) => (user[update] = req.body[update]));
 
     await user.save();
+
+    res.send(jsend.success(user));
+  } catch (err) {
+    res.status(500).send(jsend.error({ code: 500, message: err.message }));
+    console.error('[USERS] Error: ', err.message);
+  }
+});
+
+// Add product to cart
+router.patch('/:id/assign', async (req, res) => {
+  const { productId } = req.body;
+  if (!productId || !req.params.id) {
+    return res
+      .status(400)
+      .send(jsend.fail('اطلاعات وارد شده صحیح یا کامل نیست.'));
+  }
+
+  try {
+    // Check if the user already exists
+    const user = await UserModel.findById(req.params.id);
+    const product = await ProductModel.findById(productId);
+
+    if (!user || !product) {
+      return res
+        .status(400)
+        .send(jsend.fail('کاربر یا محصولی با این شناسه وجود ندارد.'));
+    }
+
+    // Add product to cart!
+    user.cart.push(product)
+    
+    await user.save()
+
+    res.send(jsend.success(user));
+  } catch (err) {
+    res.status(500).send(jsend.error({ code: 500, message: err.message }));
+    console.error('[USERS] Error: ', err.message);
+  }
+});
+
+// Delete product from cart
+router.patch('/:id/reject', async (req, res) => {
+  const { productId } = req.body;
+  if (!productId || !req.params.id) {
+    return res
+      .status(400)
+      .send(jsend.fail('اطلاعات وارد شده صحیح یا کامل نیست.'));
+  }
+
+  try {
+    // Check if the user already exists
+    const user = await UserModel.findById(req.params.id);
+    const product = await ProductModel.findById(productId);
+
+    if (!user || !product) {
+      return res
+        .status(400)
+        .send(jsend.fail('کاربر یا محصولی با این شناسه وجود ندارد.'));
+    }
+
+    // Remove product from cart!
+    const productIndex = user.cart.findIndex((product) => product._id === productId)
+    user.cart.splice(productIndex, 1)
+    
+    await user.save()
 
     res.send(jsend.success(user));
   } catch (err) {

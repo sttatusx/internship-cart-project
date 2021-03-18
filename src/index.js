@@ -13,3 +13,8 @@ app.use(express.json());
 
 // Connect to database
 initDB();
+
+// Routes
+import usersRoute from './routes/users';
+
+app.use(`${process.env.BASE_URL}/users/`, usersRoute);

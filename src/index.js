@@ -17,6 +17,8 @@ initDB();
 // Routes
 import usersRoute from './routes/users';
 import vendorsRoute from './routes/vendors';
+import productsRoute from './routes/products';
 
 app.use(`${process.env.BASE_URL}/users/`, usersRoute);
 app.use(`${process.env.BASE_URL}/vendors/`, vendorsRoute);
+app.use(`${process.env.BASE_URL}/products/`, productsRoute);

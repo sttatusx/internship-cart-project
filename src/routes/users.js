@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 // Create a new user
 router.post('/', async (req, res) => {
   const { name, email, password, cart } = req.body;
-  if (!name || !email || !password || !cart) {
+  if (!name || !email || !password) {
     return res
       .status(400)
       .send(jsend.fail('لطفا اطلاعات کاربر را صحیح وارد کنید.'));

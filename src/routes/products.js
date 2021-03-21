@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 
 // Create a new product
 router.post('/', async (req, res) => {
-  const { title, vendor, price, primaryPrice, status, stock } = req.body;
+  const { title, vendor, price } = req.body;
   if (!title || !price || (!vendor && typeof vendor !== Object)) {
     return res
       .status(400)
@@ -36,14 +36,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const product = new ProductModel({
-      title,
-      price,
-      stock,
-      status,
-      vendor,
-      primaryPrice,
-    });
+    const product = new ProductModel(req.body);
     await product.save();
 
     res.status(201).send(jsend.success(product));

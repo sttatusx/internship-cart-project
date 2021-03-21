@@ -28,7 +28,7 @@ router.get('/:id', async (req, res) => {
 
 // Create a new user
 router.post('/', async (req, res) => {
-  const { name, email, password, cart } = req.body;
+  const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res
       .status(400)
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const user = new UserModel({ name, email, password, cart });
+    const user = new UserModel(req.body);
     await user.save();
 
     res.status(201).send(jsend.success(user));

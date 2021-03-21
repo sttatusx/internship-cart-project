@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    const vendor = new VendorModel({ name, owner, products });
+    const vendor = new VendorModel(req.body);
     await vendor.save();
 
     res.status(201).send(jsend.success(vendor));

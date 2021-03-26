@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 // Configs
 const name = "basalam-cart";
 const options = {
+  useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
 };

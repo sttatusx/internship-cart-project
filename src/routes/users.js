@@ -7,7 +7,7 @@ const router = express.Router();
 // Get all the users
 router.get('/', async (req, res) => {
   try {
-    const users = await UserModel.find({});
+    const users = await UserModel.find();
     res.send(jsend.success(users));
   } catch (err) {
     res.status(500).send(jsend.error({ code: 500, message: err.message }));
@@ -18,8 +18,8 @@ router.get('/', async (req, res) => {
 // Get one user by id
 router.get('/:id', async (req, res) => {
   try {
-    const users = await UserModel.find({ _id: req.params.id });
-    res.send(jsend.success(users));
+    const user = await UserModel.findById(req.params.id);
+    res.send(jsend.success(user));
   } catch (err) {
     res.status(500).send(jsend.error({ code: 500, message: err.message }));
     console.error('[USERS] Error: ', err.message);
@@ -35,16 +35,17 @@ router.post('/', async (req, res) => {
       .send(jsend.fail('لطفا اطلاعات کاربر را صحیح وارد کنید.'));
   }
 
-  // Check if the user already exists
-  if ((await UserModel.find({ email })).length) {
-    return res
-      .status(400)
-      .send(jsend.fail('کاربری با این ایمیل از قبل وجود دارد.'));
-  }
-
   try {
-    const user = new UserModel(req.body);
-    await user.save();
+    // Check if the user already exists
+    const user = await UserModel.find({ email });
+    if (users.length) {
+      return res
+        .status(400)
+        .send(jsend.fail('کاربری با این ایمیل از قبل وجود دارد.'));
+    }
+
+    const newUser = new UserModel(req.body);
+    await newUser.save();
 
     res.status(201).send(jsend.success(user));
   } catch (err) {
@@ -56,11 +57,15 @@ router.post('/', async (req, res) => {
 // Delete one user by id
 router.delete('/:id', async (req, res) => {
   try {
-    const deletedUser = await UserModel.findOneAndDelete({
-      _id: req.params.id,
-    });
+    const user = await UserModel.findById(req.params.id);
 
-    res.send(jsend.success(deletedUser));
+    if (!user) {
+      return res
+        .status(400)
+        .send(jsend.fail('لطفا اطلاعات کاربر را صحیح وارد کنید.'));
+    }
+
+    res.status(204).send();
   } catch (err) {
     res.status(500).send(jsend.error({ code: 500, message: err.message }));
     console.error('[USERS] Error: ', err.message);
@@ -72,7 +77,7 @@ router.patch('/:id', async (req, res) => {
   const updates = Object.keys(req.body);
 
   try {
-    const user = (await UserModel.findById(req.params.id)) || {};
+    const user = await UserModel.findById(req.params.id);
     if (!user)
       res.status(404).send(jsend.fail('هیچ کاربری با این شناسه یافت نشد!'));
 
@@ -108,9 +113,9 @@ router.patch('/:id/assign', async (req, res) => {
     }
 
     // Add product to cart!
-    user.cart.push(product)
-    
-    await user.save()
+    user.cart.push(product);
+
+    await user.save();
 
     res.send(jsend.success(user));
   } catch (err) {
@@ -140,10 +145,12 @@ router.patch('/:id/reject', async (req, res) => {
     }
 
     // Remove product from cart!
-    const productIndex = user.cart.findIndex((product) => product._id === productId)
-    user.cart.splice(productIndex, 1)
-    
-    await user.save()
+    const productIndex = user.cart.findIndex(
+      (product) => product._id === productId
+    );
+    user.cart.splice(productIndex, 1);
+
+    await user.save();
 
     res.send(jsend.success(user));
   } catch (err) {

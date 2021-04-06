@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
 // Delete one user by id
 router.delete('/:id', async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.id);
+    const user = await UserModel.findOneAndDelete({ _id: req.params.id });
 
     if (!user) {
       return res

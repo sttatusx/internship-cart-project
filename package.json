@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "license": "MIT",
   "scripts": {
-    "build": "babel ./src/ -d ./dist/"
+    "build": "babel ./src/ -d ./dist/",
+    "start": "node ./dist/server.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

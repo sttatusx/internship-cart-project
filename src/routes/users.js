@@ -38,7 +38,7 @@ router.post('/', async (req, res) => {
   try {
     // Check if the user already exists
     const user = await UserModel.find({ email });
-    if (users.length) {
+    if (user.length) {
       return res
         .status(400)
         .send(jsend.fail('کاربری با این ایمیل از قبل وجود دارد.'));
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     const newUser = new UserModel(req.body);
     await newUser.save();
 
-    res.status(201).send(jsend.success(user));
+    res.status(201).send(jsend.success(newUser));
   } catch (err) {
     res.status(500).send(jsend.error({ code: 500, message: err.message }));
     console.error('[USERS] Error: ', err.message);
